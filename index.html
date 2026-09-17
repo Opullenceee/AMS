@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ABICS AMS — Auditorium Management System</title>
+<meta name="description" content="Air Base Inter College Sargodha Auditorium Management System" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/png" href="assets/logo.png" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- === TOASTS ===-->
+<div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+
+<!-- === SITE HEADER ===-->
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="#home" class="brand" data-nav="home">
+      <img class="brand-mark" src="assets/logo.png" alt="Air Base Inter College Mushaf, Sargodha logo" />
+      <span class="brand-text">ABICS <em>AMS</em></span>
+    </a>
+    <nav class="main-nav" id="main-nav">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#facilities" data-nav="facilities">Facilities</a>
+      <a href="#events" data-nav="events">Events</a>
+      <a href="#gallery" data-nav="gallery">Gallery</a>
+      <a href="#my-reservations" data-nav="my-reservations">My Reservations</a>
+      <a href="#about" data-nav="about">About</a>
+      <a href="#admin-login" data-nav="admin-login" class="nav-admin">Admin</a>
+    </nav>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- === HOME PAGE ===-->
+  <section class="page" id="page-home" data-page="home">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="hero-eyebrow">Air Base Inter College, Mushaf, Sargodha</p>
+        <h1 class="hero-title">Where ABICS<br>Comes Together.</h1>
+        <p class="hero-subtitle">Discover events, explore auditorium facilities and reserve your seat with ease.</p>
+        <div class="hero-actions">
+          <a href="#events" class="btn btn-primary" data-nav="events">View Events</a>
+          <a href="#events" class="btn btn-ghost" data-nav="events">Reserve a Seat</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="auditorium-graphic">
+          <div class="stage-block">STAGE</div>
+          <div class="rows" id="hero-rows"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-band">
+      <div class="stat-card">
+        <span class="stat-value" data-counter="totalSeats">0</span>
+        <span class="stat-label">Total Seats</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" data-counter="reservedSeats">0</span>
+        <span class="stat-label">Reserved Seats</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" data-counter="availableSeats">0</span>
+        <span class="stat-label">Available Seats</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" data-counter="upcomingEvents">0</span>
+        <span class="stat-label">Upcoming Events</span>
+      </div>
+    </div>
+
+    <div class="section-block" id="facilities-preview"></div>
+  </section>
+
+  <!-- === FACILITIES PAGE === -->
+  <section class="page" id="page-facilities" data-page="facilities">
+    <div class="page-head">
+      <p class="page-eyebrow">What the auditorium offers</p>
+      <h2>Facilities</h2>
+      <p class="page-lede">A space built for assemblies, seminars, performances and everything in between.</p>
+    </div>
+    <div class="facility-grid" id="facility-grid"></div>
+  </section>
+
+  <!-- === EVENTS PAGE === -->
+  <section class="page" id="page-events" data-page="events">
+    <div class="page-head">
+      <p class="page-eyebrow">What's on</p>
+      <h2>Events</h2>
+      <p class="page-lede">Browse upcoming college events and reserve your seat in a few steps.</p>
+    </div>
+
+    <div class="events-toolbar">
+      <div class="filter-tabs" id="event-filters">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="upcoming">Upcoming</button>
+        <button class="filter-tab" data-filter="live">Happening Now</button>
+        <button class="filter-tab" data-filter="completed">Completed</button>
+      </div>
+      <div class="search-box">
+        <input type="text" id="event-search" placeholder="Search events…" aria-label="Search events" />
+      </div>
+    </div>
+
+    <div class="event-grid" id="event-grid"></div>
+  </section>
+
+  <!-- === EVENT DETAIL / RESERVE FLOW === -->
+  <section class="page" id="page-reserve" data-page="reserve">
+    <div class="reserve-shell">
+
+      <div class="reserve-progress" id="reserve-progress">
+        <span class="rp-step active" data-step="1">Attendee</span>
+        <span class="rp-step" data-step="2">Details</span>
+        <span class="rp-step" data-step="3">Seats</span>
+        <span class="rp-step" data-step="4">Seat Map</span>
+        <span class="rp-step" data-step="5">Confirm</span>
+      </div>
+
+      <div class="event-summary-card" id="reserve-event-summary"></div>
+
+      <!-- Step 1: attendee type -->
+      <div class="reserve-step" id="step-1" data-step="1">
+        <h3>Who is attending?</h3>
+        <div class="attendee-choices">
+          <button class="attendee-choice" id="choice-student">
+            <span class="ac-icon">🎓</span>
+            <span class="ac-title">I am a Student</span>
+            <span class="ac-desc">Reserve using your class details</span>
+          </button>
+          <button class="attendee-choice" id="choice-parent">
+            <span class="ac-icon">👪</span>
+            <span class="ac-title">I am a Parent / Guardian</span>
+            <span class="ac-desc">Reserve on behalf of your child</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: details form -->
+      <div class="reserve-step hidden" id="step-2" data-step="2">
+        <h3 id="step2-title">Your Details</h3>
+        <form id="student-form" class="reserve-form hidden">
+          <div class="form-row">
+            <label>Full Name<input required type="text" id="s-name" placeholder="e.g. Ayesha Khan" /></label>
+            <label>Class
+              <select id="s-class" required>
+                <option value="">Select class</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>Subject / Group<input type="text" id="s-group" placeholder="e.g. Pre-Medical" /></label>
+            <label>Class Teacher
+              <select id="s-teacher" required>
+                <option value="">Select teacher</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>Student Email<input required type="email" id="s-email" placeholder="you@example.com" /></label>
+          </div>
+        </form>
+
+        <form id="parent-form" class="reserve-form hidden">
+          <p class="form-section-title">Parent Information</p>
+          <div class="form-row">
+            <label>Full Name<input required type="text" id="p-name" placeholder="e.g. Muhammad Asif" /></label>
+            <label>Contact Number<input required type="tel" id="p-phone" placeholder="03xx-xxxxxxx" /></label>
+          </div>
+          <div class="form-row">
+            <label>Email<input required type="email" id="p-email" placeholder="you@example.com" /></label>
+            <label>Relationship
+              <select id="p-relationship" required>
+                <option value="Mother">Mother</option>
+                <option value="Father">Father</option>
+                <option value="Guardian">Guardian</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+          </div>
+          <p class="form-section-title">Student Information</p>
+          <div class="form-row">
+            <label>Student Name<input required type="text" id="p-student-name" placeholder="e.g. Bilal Asif" /></label>
+            <label>Student Class
+              <select id="p-student-class" required>
+                <option value="">Select class</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>Student Email<input type="email" id="p-student-email" placeholder="optional" /></label>
+          </div>
+        </form>
+
+        <div class="step-nav">
+          <button class="btn btn-ghost" data-back="1">Back</button>
+          <button class="btn btn-primary" id="to-step-3">Continue</button>
+        </div>
+      </div>
+
+      <!-- Step 3: seat count + preference -->
+      <div class="reserve-step hidden" id="step-3" data-step="3">
+        <h3>How many seats would you like to reserve?</h3>
+        <div class="seat-counter">
+          <button class="counter-btn" id="seat-minus" aria-label="Decrease">−</button>
+          <span class="counter-value" id="seat-count">1</span>
+          <button class="counter-btn" id="seat-plus" aria-label="Increase">+</button>
+        </div>
+        <p class="hint-text" id="max-seat-hint"></p>
+
+        <h3>Seating preference</h3>
+        <div class="pref-choices">
+          <button class="pref-choice active" data-pref="together">
+            <span class="ac-title">Keep seats together</span>
+            <span class="ac-desc">Sit as a consecutive group</span>
+          </button>
+          <button class="pref-choice" data-pref="any">
+            <span class="ac-title">Any available seats</span>
+            <span class="ac-desc">We'll pick the best available</span>
+          </button>
+        </div>
+
+        <div class="step-nav">
+          <button class="btn btn-ghost" data-back="2">Back</button>
+          <button class="btn btn-primary" id="to-step-4">Continue to Seat Map</button>
+        </div>
+      </div>
+
+      <!-- Step 4: seat map -->
+      <div class="reserve-step hidden" id="step-4" data-step="4">
+        <h3>Select Your Seats</h3>
+        <div class="seat-legend">
+          <span><i class="dot available"></i> Available</span>
+          <span><i class="dot selected"></i> Selected</span>
+          <span><i class="dot reserved"></i> Reserved</span>
+          <span><i class="dot unavailable"></i> Unavailable</span>
+        </div>
+        <div class="hold-timer hidden" id="hold-timer">Your seats are temporarily held for <span id="hold-clock">02:00</span></div>
+        <div class="seatmap-wrap">
+          <div class="stage-label">STAGE</div>
+          <div class="seatmap" id="seatmap"></div>
+        </div>
+        <div class="seat-selected-summary" id="seat-selected-summary"></div>
+        <div class="step-nav">
+          <button class="btn btn-ghost" data-back="3">Back</button>
+          <button class="btn btn-primary" id="to-step-5">Confirm Reservation</button>
+        </div>
+      </div>
+
+      <!-- Step 5: confirmation -->
+      <div class="reserve-step hidden" id="step-5" data-step="5">
+        <div class="confirm-screen" id="confirm-screen"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- === MY RESERVATIONS PAGE ==== -->
+  <section class="page" id="page-my-reservations" data-page="my-reservations">
+    <div class="page-head">
+      <p class="page-eyebrow">This device</p>
+      <h2>My Reservations</h2>
+      <p class="page-lede">Reservations made from this browser are listed below.</p>
+    </div>
+    <div class="my-res-list" id="my-res-list"></div>
+  </section>
+
+  <!-- === ABOUT PAGE === -->
+  <section class="page" id="page-about" data-page="about">
+    <div class="page-head">
+      <p class="page-eyebrow">About the platform</p>
+      <h2>About ABICS AMS</h2>
+    </div>
+    <div class="about-content">
+      <p>The ABICS Auditorium Management System is a student-built platform for Air Base Inter College, Mushaf, Sargodha. It brings event scheduling, seat reservation and entry passes into a single, easy-to-use system for students, parents and college administration.</p>
+      <p>Built entirely with HTML, CSS and JavaScript, the system stores data locally in your browser and issues a digital, QR-coded entry pass for every confirmed reservation.</p>
+    </div>
+  </section>
+
+  <!-- === GALLERY PAGE === -->
+  <section class="page" id="page-gallery" data-page="gallery">
+    <div class="page-head">
+      <p class="page-eyebrow">A look around</p>
+      <h2>Auditorium Gallery</h2>
+      <p class="page-lede">The Syed Muntajibuddin Ahmed Auditorium — from its front entrance and gardens to the seating hall inside, and a glimpse of it in action during our 14 August Independence Day celebration.</p>
+    </div>
+    <div class="about-gallery">
+      <figure class="gallery-item" tabindex="0" role="button" aria-label="Open larger image: Main entrance">
+        <img src="assets/auditorium-front.jpg" alt="Front entrance of the Syed Muntajibuddin Ahmed Auditorium" loading="lazy" />
+        <figcaption>Main entrance</figcaption>
+      </figure>
+      <figure class="gallery-item" tabindex="0" role="button" aria-label="Open larger image: Exterior and gardens">
+        <img src="assets/auditorium-outside.jpg" alt="Exterior view of the college auditorium building and gardens" loading="lazy" />
+        <figcaption>Exterior &amp; gardens</figcaption>
+      </figure>
+      <figure class="gallery-item" tabindex="0" role="button" aria-label="Open larger image: Inside the hall">
+        <img src="assets/auditorium-inside.jpg" alt="Interior view of the auditorium seating hall" loading="lazy" />
+        <figcaption>Inside the hall</figcaption>
+      </figure>
+      <figure class="gallery-item" tabindex="0" role="button" aria-label="Open larger image: 14 August Independence Day event">
+        <img src="assets/independence-day-event.jpg" alt="Independence Day event held on stage at the auditorium" loading="lazy" />
+        <figcaption>14 August Independence Day event</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- === STANDALONE ENTRY PASS PAGE (what a scanned QR opens) === -->
+  <section class="page" id="page-pass-view" data-page="pass-view">
+    <div class="page-head">
+      <p class="page-eyebrow">Digital Entry Pass</p>
+      <h2>Reservation Pass</h2>
+    </div>
+    <div id="pass-view-content"></div>
+  </section>
+
+  <!-- === ADMIN LOGIN === -->
+  <section class="page" id="page-admin-login" data-page="admin-login">
+    <div class="pin-screen">
+      <p class="page-eyebrow">Restricted access</p>
+      <h2>Admin Login</h2>
+      <p class="page-lede">Enter your administrator PIN to continue.</p>
+      <form id="pin-form" class="pin-form">
+        <input type="password" inputmode="numeric" maxlength="8" id="pin-input" placeholder="••••" autocomplete="off" />
+        <button type="submit" class="btn btn-primary">Unlock Dashboard</button>
+      </form>
+      <p class="pin-error hidden" id="pin-error">Incorrect PIN. Please try again.</p>
+    </div>
+  </section>
+
+  <!-- === ADMIN DASHBOARD === -->
+  <section class="page" id="page-admin" data-page="admin">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-brand">ABICS <em>Admin</em></div>
+        <nav class="admin-nav" id="admin-nav">
+          <button class="admin-nav-item active" data-admin-tab="dashboard">Dashboard</button>
+          <button class="admin-nav-item" data-admin-tab="events">Events</button>
+          <button class="admin-nav-item" data-admin-tab="reservations">Reservations</button>
+          <button class="admin-nav-item" data-admin-tab="seats">Seats</button>
+          <button class="admin-nav-item" data-admin-tab="facilities">Facilities</button>
+          <button class="admin-nav-item" data-admin-tab="checkin">Check-In</button>
+          <button class="admin-nav-item" data-admin-tab="analytics">Analytics</button>
+          <button class="admin-nav-item" data-admin-tab="settings">Settings</button>
+        </nav>
+        <button class="btn btn-ghost admin-logout" id="admin-logout">Log Out</button>
+      </aside>
+
+      <div class="admin-content">
+
+        <div class="admin-tab" id="admin-tab-dashboard" data-admin-tab="dashboard">
+          <h2>Dashboard</h2>
+          <div class="admin-stats" id="admin-stats"></div>
+          <h3>Recent Reservations</h3>
+          <div class="table-wrap"><table class="data-table" id="admin-recent-table"></table></div>
+        </div>
+
+        <div class="admin-tab hidden" id="admin-tab-events" data-admin-tab="events">
+          <div class="admin-tab-head">
+            <h2>Events</h2>
+            <button class="btn btn-primary" id="new-event-btn">+ New Event</button>
+          </div>
+          <div class="table-wrap"><table class="data-table" id="admin-events-table"></table></div>
+        </div>
+
+        <div class="admin-tab hidden" id="admin-tab-reservations" data-admin-tab="reservations">
+          <h2>Reservations</h2>
+          <div class="events-toolbar">
+            <div class="filter-tabs" id="res-filters">
+              <button class="filter-tab active" data-resfilter="all">All</button>
+              <button class="filter-tab" data-resfilter="student">Students</button>
+              <button class="filter-tab" data-resfilter="parent">Parents</button>
+              <button class="filter-tab" data-resfilter="pending">Pending</button>
+              <button class="filter-tab" data-resfilter="confirmed">Confirmed</button>
+              <button class="filter-tab" data-resfilter="cancelled">Cancelled</button>
+              <button class="filter-tab" data-resfilter="checked-in">Checked In</button>
+            </div>
+            <div class="search-box"><input type="text" id="res-search" placeholder="Search reservations…" /></div>
+          </div>
+          <div class="table-wrap"><table class="data-table" id="admin-res-table"></table></div>
+        </div>
+
+        <div class="admin-tab hidden" id="admin-tab-seats" data-admin-tab="seats">
+          <h2>Seats</h2>
+          <p class="page-lede">Configure the auditorium layout. Changing rows/columns regenerates the seat map (existing reservations are preserved where possible).</p>
+          <div class="form-row">
+            <label>Rows<input type="number" min="1" max="26" id="cfg-rows" /></label>
+            <label>Seats per row<input type="number" min="1" max="40" id="cfg-cols" /></label>
+          </div>
+          <button class="btn btn-primary" id="apply-seat-config">Apply Layout</button>
+          <div class="seatmap-wrap admin-seatmap-wrap">
+            <div class="stage-label">STAGE</div>
+            <div class="seatmap" id="admin-seatmap"></div>
+          </div>
+        </div>
+
+        <div class="admin-tab hidden" id="admin-tab-facilities" data-admin-tab="facilities">
+          <div class="admin-tab-head">
+            <h2>Facilities</h2>
+            <button class="btn btn-primary" id="new-facility-btn">+ New Facility</button>
+          </div>
+          <div class="facility-grid" id="admin-facility-grid"></div>
+        </div>
+
+        <div class="admin-tab hidden" id="admin-tab-checkin" data-admin-tab="checkin">
+          <h2>Event Check-In</h2>
+          <div class="checkin-box">
+            <input type="text" id="checkin-input" placeholder="Enter reservation ID e.g. AMS-2026-00482" />
+            <button class="btn btn-primary" id="checkin-btn">Find</button>
+          </div>
+          <div id="checkin-result"></div>
+        </div>
+
+        <div class="admin-tab hidden" id="admin-tab-analytics" data-admin-tab="analytics">
+          <h2>Analytics</h2>
+          <div class="admin-stats" id="analytics-stats"></div>
+          <div class="analytics-charts" id="analytics-charts"></div>
+        </div>
+
+        <div class="admin-tab hidden" id="admin-tab-settings" data-admin-tab="settings">
+          <h2>Settings</h2>
+          <div class="settings-grid">
+            <label>Maximum seats per reservation
+              <input type="number" min="1" max="20" id="cfg-max-seats" />
+            </label>
+            <label>Require admin approval before confirming
+              <select id="cfg-require-approval">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </label>
+            <label>Temporary seat hold duration (seconds)
+              <input type="number" min="30" max="600" id="cfg-hold-duration" />
+            </label>
+            <label>Admin PIN
+              <input type="text" id="cfg-admin-pin" maxlength="8" />
+            </label>
+          </div>
+          <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+
+          <hr class="divider" />
+          <h3>Data Management</h3>
+          <div class="data-actions">
+            <button class="btn btn-ghost" id="export-data-btn">Export Data</button>
+            <label class="btn btn-ghost file-btn">Import Data<input type="file" id="import-data-input" accept="application/json" hidden /></label>
+            <button class="btn btn-danger" id="reset-data-btn">Reset Demo Data</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- === EVENT FORM MODAL (admin) ===-->
+<div class="modal-overlay hidden" id="event-modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="event-modal-title">New Event</h3>
+      <button class="modal-close" data-close-modal>&times;</button>
+    </div>
+    <form id="event-form" class="reserve-form">
+      <input type="hidden" id="ev-id" />
+      <div class="form-row">
+        <label>Event Name<input required type="text" id="ev-name" /></label>
+        <label>Category
+          <select id="ev-category">
+            <option>Academic</option>
+            <option>Cultural</option>
+            <option>Sports</option>
+            <option>Assembly</option>
+            <option>Seminar</option>
+            <option>Competition</option>
+            <option>Parent Event</option>
+            <option>Other</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="full">Description<textarea id="ev-desc" rows="3"></textarea></label>
+      </div>
+      <div class="form-row">
+        <label>Date<input required type="date" id="ev-date" /></label>
+        <label>Location<input required type="text" id="ev-location" /></label>
+      </div>
+      <div class="form-row">
+        <label>Start Time<input required type="time" id="ev-start" /></label>
+        <label>End Time<input required type="time" id="ev-end" /></label>
+      </div>
+      <div class="form-row">
+        <label>Organizer<input required type="text" id="ev-organizer" /></label>
+        <label>Maximum Seats<input required type="number" min="1" id="ev-maxseats" /></label>
+      </div>
+      <div class="form-row">
+        <label>Status
+          <select id="ev-status">
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
+          </select>
+        </label>
+      </div>
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Event</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- === FACILITY FORM MODAL (admin) === -->
+<div class="modal-overlay hidden" id="facility-modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="facility-modal-title">New Facility</h3>
+      <button class="modal-close" data-close-modal>&times;</button>
+    </div>
+    <form id="facility-form" class="reserve-form">
+      <input type="hidden" id="fac-id" />
+      <div class="form-row">
+        <label class="full">Title<input required type="text" id="fac-title" /></label>
+      </div>
+      <div class="form-row">
+        <label class="full">Description<textarea id="fac-desc" rows="3"></textarea></label>
+      </div>
+      <div class="form-row">
+        <label class="full">Icon (single emoji)<input type="text" id="fac-icon" maxlength="4" placeholder="🎭" /></label>
+      </div>
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Facility</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- === RESERVATION DETAIL MODAL (admin) === -->
+<div class="modal-overlay hidden" id="res-modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Reservation Detail</h3>
+      <button class="modal-close" data-close-modal>&times;</button>
+    </div>
+    <div id="res-modal-body"></div>
+  </div>
+</div>
+
+<!-- === ENTRY PASS MODAL === -->
+<div class="modal-overlay hidden" id="pass-modal-overlay">
+  <div class="modal modal-pass">
+    <div class="modal-head no-print">
+      <h3>Digital Entry Pass</h3>
+      <button class="modal-close" data-close-modal>&times;</button>
+    </div>
+    <div id="pass-content"></div>
+    <div class="pass-actions no-print">
+      <button class="btn btn-ghost" id="pass-print-btn">Download / Print</button>
+      <button class="btn btn-primary" id="pass-email-btn">Send to Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- === CONFIRM DIALOG === -->
+<div class="modal-overlay hidden" id="confirm-dialog-overlay">
+  <div class="modal modal-small">
+    <p id="confirm-dialog-text">Are you sure?</p>
+    <div class="step-nav">
+      <button class="btn btn-ghost" id="confirm-dialog-cancel">Cancel</button>
+      <button class="btn btn-danger" id="confirm-dialog-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- === GALLERY LIGHTBOX MODAL === -->
+<div class="modal-overlay hidden" id="gallery-lightbox-overlay">
+  <div class="modal modal-lightbox">
+    <button class="modal-close lightbox-close" data-close-modal>&times;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <p id="lightbox-caption" class="lightbox-caption"></p>
+  </div>
+</div>
+
+<!-- EmailJS SDK (This is used only if the admin configures a service/template/public key) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
