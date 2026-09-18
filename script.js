@@ -296,20 +296,6 @@ function renderHome() {
     animateCounter(el, counters[el.dataset.counter] || 0);
   });
 
-  // Hero seat graphic
-  const rowsWrap = document.getElementById("hero-rows");
-  rowsWrap.innerHTML = "";
-  for (let r = 0; r < 5; r++) {
-    const row = document.createElement("div");
-    row.className = "row";
-    for (let c = 0; c < 16; c++) {
-      const span = document.createElement("span");
-      if (Math.random() > 0.62) span.classList.add("lit");
-      row.appendChild(span);
-    }
-    rowsWrap.appendChild(row);
-  }
-
   // Facilities preview (first 4)
   const preview = document.getElementById("facilities-preview");
   preview.innerHTML = `
@@ -1511,34 +1497,26 @@ function seedDemoData() {
   };
 
   const events = [
+    { id: uid("ev"), name: "Annual Science Exhibition", category: "Academic",
+      description: "Student projects and demonstrations from the science departments.",
+      date: iso(6), startTime: "10:00", endTime: "13:00", location: "Syed Muntajibuddin Ahmed Auditorium",
+      organizer: "Science Department", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
+    { id: uid("ev"), name: "Independance Day", category: "Cultural",
+      description: "A celebration of the academic year with performances and awards.",
+      date: iso(14), startTime: "16:00", endTime: "19:00", location: "Syed Muntajibuddin Ahmed Auditorium",
+      organizer: "College Administration", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
     { id: uid("ev"), name: "Parent Orientation Seminar", category: "Seminar",
       description: "Briefing session for parents on the upcoming academic term.",
       date: iso(3), startTime: "09:00", endTime: "11:00", location: "Syed Muntajibuddin Ahmed Auditorium",
       organizer: "Admissions Office", maxSeats: 80, status: "open", createdAt: new Date().toISOString() },
-    { id: uid("ev"), name: "Quiz Competition", category: "Competition",
-      description: "Inter-class quiz competition testing general knowledge and academic subjects.",
-      date: iso(12), startTime: "11:00", endTime: "13:00", location: "Syed Muntajibuddin Ahmed Auditorium",
-      organizer: "Academics Office", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
+    { id: uid("ev"), name: "Student Talent Showcase", category: "Cultural",
+      description: "An evening of music, drama and spoken word by ABICS students.",
+      date: iso(-3), startTime: "15:00", endTime: "17:00", location: "Syed Muntajibuddin Ahmed Auditorium",
+      organizer: "Student Council", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
     { id: uid("ev"), name: "Inter-Class Competition", category: "Competition",
       description: "Quiz and debate finals between senior classes.",
       date: iso(20), startTime: "11:00", endTime: "13:30", location: "Syed Muntajibuddin Ahmed Auditorium",
-      organizer: "Academics Office", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
-    { id: uid("ev"), name: "Zonal Competition", category: "Competition",
-      description: "Zonal-level competition representing the college against other institutions in the zone.",
-      date: iso(30), startTime: "10:00", endTime: "14:00", location: "Syed Muntajibuddin Ahmed Auditorium",
-      organizer: "Academics Office", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
-    { id: uid("ev"), name: "Annual Prize Distribution Ceremony", category: "Academic",
-      description: "Recognition of outstanding students for academic and co-curricular achievement over the year.",
-      date: iso(45), startTime: "10:00", endTime: "13:00", location: "Syed Muntajibuddin Ahmed Auditorium",
-      organizer: "College Administration", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
-    { id: uid("ev"), name: "Iqbal Day", category: "Cultural",
-      description: "A commemorative programme of speeches and poetry marking the birth anniversary of Allama Iqbal.",
-      date: "2026-11-09", startTime: "10:00", endTime: "12:00", location: "Syed Muntajibuddin Ahmed Auditorium",
-      organizer: "College Administration", maxSeats: 96, status: "open", createdAt: new Date().toISOString() },
-    { id: uid("ev"), name: "Independence Day", category: "Cultural",
-      description: "A celebration of the academic year with performances and awards.",
-      date: "2027-08-14", startTime: "16:00", endTime: "19:00", location: "Syed Muntajibuddin Ahmed Auditorium",
-      organizer: "College Administration", maxSeats: 96, status: "open", createdAt: new Date().toISOString() }
+      organizer: "Academics Office", maxSeats: 96, status: "open", createdAt: new Date().toISOString() }
   ];
 
   const facilities = [
@@ -1597,7 +1575,10 @@ function init() {
   initEmail();
   cleanExpiredHolds();
   const startPage = (location.hash || "#home").replace("#", "");
-  navigateTo(["home","facilities","events","gallery","my-reservations","about","admin-login","admin"].includes(startPage) ? startPage : "home");
+  navigateTo(["home","facilities","events","gallery","my-reservations","admin-login","admin"].includes(startPage) ? startPage : "home");
+
+  const footerYear = document.getElementById("footer-year");
+  if (footerYear) footerYear.textContent = new Date().getFullYear();
 
   // periodic hold cleanup so stale holds free up seats even if no one is on the seat step
   setInterval(() => { cleanExpiredHolds(); }, 5000);
