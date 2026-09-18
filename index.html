@@ -8,10 +8,65 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 
 <link rel="icon" type="image/png" href="assets/logo.png" />
 <link rel="stylesheet" href="style.css" />
+
+<!-- Extra breathing-room pass (index.html only) — loosens up spacing across the page
+     without touching style.css or script.js -->
+<style>
+  /* --- General page rhythm --- */
+  .page{ padding: 84px 32px 150px; }
+  .page-head{ margin-bottom: 56px; }
+  .page-lede{ margin-top: 4px; }
+
+  /* --- Hero --- */
+  .hero{ min-height: 88vh; padding-top: 170px; padding-bottom: 130px; }
+  .hero-eyebrow{ margin-bottom: 26px; }
+  .hero-title{ margin-bottom: 30px; }
+  .hero-subtitle{ margin-bottom: 44px; line-height: 1.7; }
+  .hero-actions{ gap: 18px; }
+
+  /* --- Stats band --- */
+  .stats-band{ gap: 24px; padding: 20px 32px 110px; }
+  .stat-card{ padding: 32px 28px; }
+  .stat-value{ margin-bottom: 6px; }
+
+  /* --- Facilities / Events grids --- */
+  #facilities-preview{ margin-top: 20px; }
+  .facility-grid{ gap: 24px; }
+  .facility-card{ padding: 32px 26px; }
+  .facility-icon{ margin-bottom: 18px; }
+  .event-grid{ gap: 26px; }
+  .event-card{ padding: 32px; gap: 16px; }
+  .events-toolbar{ margin-bottom: 36px; }
+
+  /* --- About (on Home) --- */
+  .home-about{ margin-top: 110px; padding-top: 140px; padding-bottom: 140px; }
+  .home-about-inner p{ line-height: 1.75; margin-bottom: 1.4em; }
+  .home-about-inner h2{ margin-bottom: 24px; }
+
+  /* --- Reserve flow / My reservations breathing room --- */
+  .reserve-progress{ margin-bottom: 48px; }
+  .reserve-step h3{ margin-bottom: 20px; }
+  .event-summary-card{ padding: 26px 28px; margin-bottom: 40px; }
+  .my-res-list{ gap: 20px; }
+
+  /* --- Footer --- */
+  .footer-inner{ padding: 90px 32px 60px; gap: 52px; }
+  .footer-brand{ gap: 18px; }
+  .footer-col h5{ margin-bottom: 18px; }
+  .footer-col p{ margin-bottom: 12px; }
+  .footer-links{ gap: 14px; }
+  .footer-bottom{ padding: 26px 32px; }
+
+  @media (max-width: 980px){
+    .page{ padding: 64px 24px 110px; }
+    .hero{ padding-top: 130px; padding-bottom: 90px; }
+    .home-about{ margin-top: 80px; padding-top: 90px; padding-bottom: 90px; }
+  }
+</style>
 </head>
 <body>
 
@@ -31,7 +86,6 @@
       <a href="#events" data-nav="events">Events</a>
       <a href="#gallery" data-nav="gallery">Gallery</a>
       <a href="#my-reservations" data-nav="my-reservations">My Reservations</a>
-      <a href="#about" data-nav="about">About</a>
       <a href="#admin-login" data-nav="admin-login" class="nav-admin">Admin</a>
     </nav>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
@@ -44,44 +98,74 @@
 
   <!-- === HOME PAGE ===-->
   <section class="page" id="page-home" data-page="home">
-    <div class="hero">
+    <div class="hero" style="background-image: url('assets/auditorium-inside.jpg');">
+      <div class="hero-overlay" aria-hidden="true"></div>
       <div class="hero-copy">
         <p class="hero-eyebrow">Air Base Inter College, Mushaf, Sargodha</p>
-        <h1 class="hero-title">Where ABICS<br>Comes Together.</h1>
+        <h1 class="hero-title">Where ABICS<br>Comes <em>Together.</em></h1>
         <p class="hero-subtitle">Discover events, explore auditorium facilities and reserve your seat with ease.</p>
         <div class="hero-actions">
           <a href="#events" class="btn btn-primary" data-nav="events">View Events</a>
           <a href="#events" class="btn btn-ghost" data-nav="events">Reserve a Seat</a>
         </div>
       </div>
-      <div class="hero-visual" aria-hidden="true">
-        <div class="auditorium-graphic">
-          <div class="stage-block">STAGE</div>
-          <div class="rows" id="hero-rows"></div>
-        </div>
-      </div>
     </div>
 
-    <div class="stats-band">
-      <div class="stat-card">
+  <section class="stats-band">
+  <div class="stats-header">
+    <span class="stats-eyebrow">Real-time information</span>
+    <h2>Seats Data</h2>
+  </div>
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon">💺</div>
+      <div class="stat-content">
         <span class="stat-value" data-counter="totalSeats">0</span>
         <span class="stat-label">Total Seats</span>
       </div>
-      <div class="stat-card">
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🎟️</div>
+      <div class="stat-content">
         <span class="stat-value" data-counter="reservedSeats">0</span>
         <span class="stat-label">Reserved Seats</span>
       </div>
-      <div class="stat-card">
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🪑</div>
+      <div class="stat-content">
         <span class="stat-value" data-counter="availableSeats">0</span>
         <span class="stat-label">Available Seats</span>
       </div>
-      <div class="stat-card">
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-content">
         <span class="stat-value" data-counter="upcomingEvents">0</span>
         <span class="stat-label">Upcoming Events</span>
       </div>
     </div>
 
+  </div>
+</section>
+
+
     <div class="section-block" id="facilities-preview"></div>
+
+    <div class="home-about" id="about" style="background-image: url('assets/auditorium-front.jpg');">
+      <div class="home-about-overlay" aria-hidden="true"></div>
+      <div class="home-about-inner">
+        <p class="page-eyebrow">About the platform</p>
+        <h2>About ABICS AMS</h2>
+        <p>The ABICS Auditorium Management System is a student-built platform for Air Base Inter College, Mushaf, Sargodha. It brings event scheduling, seat reservation and entry passes into a single, easy-to-use system for students, parents and college administration.</p>
+        <p>Built entirely with HTML, CSS and JavaScript, the system stores data locally in your browser and issues a digital, QR-coded entry pass for every confirmed reservation.</p>
+      </div>
+    </div>
   </section>
 
   <!-- === FACILITIES PAGE === -->
@@ -277,18 +361,6 @@
     <div class="my-res-list" id="my-res-list"></div>
   </section>
 
-  <!-- === ABOUT PAGE === -->
-  <section class="page" id="page-about" data-page="about">
-    <div class="page-head">
-      <p class="page-eyebrow">About the platform</p>
-      <h2>About ABICS AMS</h2>
-    </div>
-    <div class="about-content">
-      <p>The ABICS Auditorium Management System is a student-built platform for Air Base Inter College, Mushaf, Sargodha. It brings event scheduling, seat reservation and entry passes into a single, easy-to-use system for students, parents and college administration.</p>
-      <p>Built entirely with HTML, CSS and JavaScript, the system stores data locally in your browser and issues a digital, QR-coded entry pass for every confirmed reservation.</p>
-    </div>
-  </section>
-
   <!-- === GALLERY PAGE === -->
   <section class="page" id="page-gallery" data-page="gallery">
     <div class="page-head">
@@ -463,6 +535,43 @@
   </section>
 
 </main>
+
+<!-- === SITE FOOTER ===-->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img class="footer-mark" src="assets/logo.png" alt="Air Base Inter College Mushaf, Sargodha logo" />
+      <div>
+        <div class="footer-title">ABICS <em>AMS</em></div>
+        <p class="footer-tag">Syed Muntajibuddin Ahmed Auditorium</p>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h5>Location</h5>
+      <p>Air Base Inter College, Mushaf,<br>Sargodha, Punjab, Pakistan</p>
+    </div>
+
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <p><a href="tel:+924810000000">+92 48 100 0000</a></p>
+      <p><a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook Page</a></p>
+    </div>
+
+    <div class="footer-col">
+      <h5>Quick Links</h5>
+      <nav class="footer-links">
+        <a href="#home" data-nav="home">Home</a>
+        <a href="#facilities" data-nav="facilities">Facilities</a>
+        <a href="#events" data-nav="events">Events</a>
+        <a href="#gallery" data-nav="gallery">Gallery</a>
+      </nav>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span id="footer-year"></span> Air Base Inter College, Mushaf, Sargodha. All rights reserved.</p>
+  </div>
+</footer>
 
 <!-- === EVENT FORM MODAL (admin) ===-->
 <div class="modal-overlay hidden" id="event-modal-overlay">
